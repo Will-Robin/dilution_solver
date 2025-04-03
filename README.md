@@ -11,6 +11,7 @@ packages:
 - `pip install scipy`
 - `pip install numpy`
 - `pip install pandas`
+- `pip install pyDOE3`
 
 In the root directory of the repository, run the following command to make
 dilution_solver available for import:
@@ -34,7 +35,7 @@ pip install -e .
    Example:
 
    ```
-   sample_name,stock_1,stock_2,stock_3,stock_4,volume
+   sample_name,stock_1_concentration/ M,stock_2_concentration/ M,stock_3_concentration/ M,stock_4_concentration/ M,volume/ L
    test_01,0.1, 0.4, 0.6, 0.3,0.1
    test_02,0.5, 0.3, 0.7, 1.2,0.1
    test_03,0.6, 0.8, 0.3, 0.1,0.1
@@ -49,21 +50,25 @@ pip install -e .
      these stock solutions and output them in a separate file.
 
 
-  Example:
+    Example:
 
-  ```
-  stock_name,concentration,lower_bound,upper_bound
-  stock_01,0.2,0.001,4.0
-  stock_02,0.4,0.001,4.0
-  stock_03,0.5,0.001,4.0
-  stock_04,0.4,0.001,4.0
-  ```
+    ```
+    stock_name,concentration/ M,lower_bound/ M,upper_bound/ M
+    stock_01,0.2,0.001,4.0
+    stock_02,0.4,0.001,4.0
+    stock_03,0.5,0.001,4.0
+    stock_04,0.4,0.001,4.0
+    ```
 
 3. Below is an example script which takes in experimental designs and outputs
    files containing a suggested, feasible design. If the design does not work,
    warnings will be printed. See also: `example.py`.
 
   ```python
+  import pandas as pd
+  from dilution_solver.routines import calculate_stock_volumes
+  from dilution_solver.routines import validate_or_optimize
+
   # Load concentrations of four stock solutions, one for each component
   stock_df = pd.read_csv("data/stocks.csv")
   stock_c = stock_df.concentration.to_numpy()
@@ -108,23 +113,30 @@ pip install -e .
   ```
 
 4. You can either go ahead with the design suggested by the software, or round
-   up the suggested values it gives to make preparation more convenient. If the
+   up the suggested values it gives to make preparation more convenient and run
+   the script again to get the volumes required for each sample. If the
    process fails to suggest a feasible design, consider increasing the upper
    bound of each stock concentration.
 
 ### Starting from desired concentration ranges
 
-In this case, we can start with design of experiments (DoE) approaches in
-`dilution_solver.doe` (see also [PyDOE3](https://github.com/relf/pyDOE3), from
-which some of the strategies are derived).
+In this case, we can start with design of experiments (DoE) approaches in the
+`dilution_solver.doe` module (see also [PyDOE3](https://github.com/relf/pyDOE3),
+from which some of the strategies are derived).
 
 You will have to inspect the DoE functions to see what arguments they accept. In
 general, the main thing to supply are high and low limits for the concentrations
 of each component. You may also have to supply the number of samples to make,
 or the number of levels to create as required by the selected algorithm.
 
-The following script creates a Box-Behnken design from some sample limits. Note
-that you can store the inputs (experiment code, concentration ranges) externally in files and load them in.
+The following script creates a Box-Behnken design from some sample limits. Other
+experimental designs are available `dilution_solver.doe` module. Note that you
+can also store the inputs (experiment code, concentration ranges) externally in files
+and load them in.
+
+The below code will give a spreadsheet of sample concentrations which can be
+used as input for the section above in selecting stock concentrations and sample
+preparation volumes.
 
 ```python
 import numpy as np
@@ -152,5 +164,3 @@ df = df[cols]
 
 print(df.head())
 ```
-
-
