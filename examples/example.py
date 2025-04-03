@@ -1,3 +1,8 @@
+"""
+Loading in a set of desired sample concentrations and proposed stock
+concentrations from a file, and optimising the stock concentrations to make the
+experiment feasible.
+"""
 import pandas as pd
 from dilution_solver import calculate_stock_volumes
 from dilution_solver import validate_or_optimize
