@@ -1,0 +1,4 @@
+sample_name,stock_1,stock_2,stock_3,stock_4,volume
+test_01,0.1,0.4,0.6,0.3,0.1
+test_02,0.5,0.3,0.7,1.2,0.6
+test_03,0.6,0.8,0.3,0.1,0.1

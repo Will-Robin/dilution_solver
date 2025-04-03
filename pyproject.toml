@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dilution_solver"
+version = "0.0.1"
+description = "A library for planning experiment dilutions."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "William E. Robinson", email = "william.robinson@ru.nl" }]
+maintainers = [
+  { name = "William E. Robinson", email = "william.robinson@ru.nl" },
+]
+dependencies = ["numpy", "pandas", "scipy"]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[project.urls]
