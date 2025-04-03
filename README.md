@@ -21,6 +21,8 @@ pip install -e .
 
 ## Usage
 
+### Beginning from a set of sample and stock concentrations
+
 1. Create a csv file of target concentrations and volumes. Each line should be
    a sample, the concentration of each component is a column, and one column
    gives the sample volume, another gives the sample name. It makes things
@@ -107,3 +109,46 @@ pip install -e .
    up the suggested values it gives to make preparation more convenient. If the
    process fails to suggest a feasible design, consider increasing the upper
    bound of each stock concentration.
+
+### Starting from desired concentration ranges
+
+In this case, we can start with design of experiments (DoE) approaches in
+`dilution_solver.doe` (see also [PyDOE3](https://github.com/relf/pyDOE3), from
+which some of the strategies are derived).
+
+You will have to inspect the DoE functions to see what arguments they accept. In
+general, the main thing to supply are high and low limits for the concentrations
+of each component. You may also have to supply the number of samples to make,
+or the number of levels to create as required by the selected algorithm.
+
+The following script creates a Box-Behnken design from some sample limits. Note
+that you can store the inputs (experiment code, concentration ranges) externally in files and load them in.
+
+```python
+import numpy as np
+import pandas as pd
+from dilution_solver import doe
+
+# Specify input information
+exp_code = "VPR001"
+
+# Generate the design
+n_factors = 3
+factor_names = [f"factor_{n}" for n in range(n_factors)]
+low = np.full(n_factors, 0.1)
+high = np.full(n_factors, 1.0)
+scaled_design = doe.box_behnken_design(n_factors, low, high)
+
+# Create output
+df = pd.DataFrame(scaled_design, columns=[x for x in factor_names])
+sample_names = [f"{exp_code}_{i:03}" for i in range(scaled_design.shape[0])]
+df["sample_name"] = sample_names
+
+# Reorder columns
+cols = ["sample_name"] + [x for x in factor_names]
+df = df[cols]
+
+print(df.head())
+```
+
+
