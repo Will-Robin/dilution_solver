@@ -16,6 +16,6 @@ maintainers = [
 dependencies = ["numpy", "pandas", "scipy"]
 
 [project.optional-dependencies]
-dev = ["ruff", "pyDOE3"]
+dev = ["ruff", "pyDOE3", "pdoc"]
 
 [project.urls]
