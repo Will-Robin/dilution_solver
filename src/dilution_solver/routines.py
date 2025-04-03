@@ -1,9 +1,20 @@
 import numpy as np
-import pandas as pd
 from scipy.optimize import minimize
+from typing import Annotated, Literal, TypeVar
+import numpy.typing as npt
 
 
-def calculate_stock_volumes(stock_c, targets_c, targets_v):
+DType = TypeVar("DType", bound=np.generic)
+
+Array1 = Annotated[npt.NDArray[DType], Literal[1]]
+Array2 = Annotated[npt.NDArray[DType], Literal[2]]
+
+
+def calculate_stock_volumes(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array1[np.float64],
+) -> tuple[Array2[np.float64], Array1[np.float64]]:
     """
     Find out volumes required to make target concentrations (targets_c), given
     stock concentrations (stock_c), then calculate the difference between the
@@ -11,18 +22,18 @@ def calculate_stock_volumes(stock_c, targets_c, targets_v):
 
     Parameters
     ----------
-    stock_c: np.array
+    stock_c: Array1[np.float64]
         Concentrations of stock solutions (n x 1 for n stocks).
 
-    targets_c: np.array
+    targets_c: Array2[np.float64]
         Concentrations of stock solutions (m x n for m samples and n stocks).
 
-    targets_v: np.array
+    targets_v: Array1[np.float64]
         Intended target solution volumes (m x 1 for m samples).
 
     Returns
     -------
-    (stock_v, excess_volume): (np.array, np.array)
+    (stock_v, excess_volume):, Array2[np.float64]) Array1[np.float64]
         The calculated amounts of stock solution required, and the difference
         between the intended sample volumes and the total calculated
         stock volumes per sample.
@@ -42,7 +53,11 @@ def calculate_stock_volumes(stock_c, targets_c, targets_v):
     return stock_v, excess_volume
 
 
-def evaluate_stock_concentrations(stock_c, targets_c, targets_v):
+def evaluate_stock_concentrations(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array2[np.float64],
+) -> float:
     """
     Calculate the error of a proposed stock concentration (stock_c) for an
     experimental design, costed according to the difference betweem the target
@@ -50,13 +65,13 @@ def evaluate_stock_concentrations(stock_c, targets_c, targets_v):
 
     Parameters
     ----------
-    stock_c: np.array
+    stock_c: Array1[np.float64]
         Concentrations of stock solutions (n x 1 for n stocks).
 
-    targets_c: np.array
+    targets_c: Array1[np.float64]
         Concentrations of stock solutions (m x n for m samples and n stocks).
 
-    targets_v: np.array
+    targets_v: Array1[np.float64]
         Intended target solution volumes (m x 1 for m samples).
 
     Returns
@@ -73,7 +88,12 @@ def evaluate_stock_concentrations(stock_c, targets_c, targets_v):
     return objective
 
 
-def optimize_stock_concentrations(stock_c, targets_c, targets_v, bounds):
+def optimize_stock_concentrations(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array2[np.float64],
+    bounds: list[tuple[float]],
+) -> Array1[np.float64]:
     """
     Choose optimal stock concentrations based on specified target
     concentrations (targets_c) and volumes (targets_v) within bounds
@@ -81,13 +101,13 @@ def optimize_stock_concentrations(stock_c, targets_c, targets_v, bounds):
 
     Parameters
     ----------
-    stock_c: np.array
+    stock_c: Array1[np.float64]
         Concentrations of stock solutions (n x 1 for n stocks).
 
-    targets_c: np.array
+    targets_c: Array2[np.float64]
         Concentrations of stock solutions (m x n for m samples and n stocks).
 
-    targets_v: np.array
+    targets_v: Array2[np.float64]
         Intended target solution volumes (m x 1 for m samples).
 
     bounds: list(tuple(float))
@@ -95,10 +115,7 @@ def optimize_stock_concentrations(stock_c, targets_c, targets_v, bounds):
 
     Returns
     -------
-    (optimized_stock_c, optimised_stock_v, optimised_excess_volume): (np.array, np.array, np.array) objective: float
-        Optimised stock concentrations, stock solution required, and the
-        difference between the intended sample volumes and the total calculated
-        stock volumes per sample.
+    optimized_stock_c: Array1[np.float64]
     """
     # Optimize
     result = minimize(
@@ -131,7 +148,12 @@ def optimize_stock_concentrations(stock_c, targets_c, targets_v, bounds):
     return optimized_stock_c
 
 
-def validate_or_optimize(stock_c, targets_c, targets_v, bounds):
+def validate_or_optimize(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array2[np.float64],
+    bounds: list[tuple[float]],
+) -> Array1[np.float64]:
     """
     Test if an experiment design will be feasible. If not, attempt to optimise
     it so that it is feasible.
@@ -152,7 +174,7 @@ def validate_or_optimize(stock_c, targets_c, targets_v, bounds):
 
     Returns
     -------
-    (optimized_stock_c, optimised_stock_v, optimised_excess_volume): (np.array, np.array, np.array)
+    optimized_stock_c: Array1[np.float64]
         Potentially feasible stock concentrations, stock solution required, and the
         difference between the intended sample volumes and the total calculated
         stock volumes per sample.

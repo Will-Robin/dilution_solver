@@ -1,7 +1,22 @@
+import numpy as np
 from .routines import calculate_stock_volumes
 from .routines import validate_or_optimize
+from typing import Annotated, Literal, TypeVar
+import numpy.typing as npt
 
-def pass_case(stock_c, targets_c, targets_v, bounds):
+
+DType = TypeVar("DType", bound=np.generic)
+
+Array1 = Annotated[npt.NDArray[DType], Literal[1]]
+Array2 = Annotated[npt.NDArray[DType], Literal[2]]
+
+
+def pass_case(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array2[np.float64],
+    bounds: list[tuple[float]],
+):
     """
     Parameters
     ----------
@@ -21,9 +36,9 @@ def pass_case(stock_c, targets_c, targets_v, bounds):
     print("\nRunning pass case test.")
     print("-----------------------")
 
-    optimized_stock_c = pass_or_optimize(stock_c, targets_c, targets_v, bounds)
+    optimized_stock_c = validate_or_optimize(stock_c, targets_c, targets_v, bounds)
 
-    optimised_stock_v, optimised_excess_volume = test_stock_set(
+    optimised_stock_v, optimised_excess_volume = calculate_stock_volumes(
         optimized_stock_c, targets_c, targets_v
     )
 
@@ -33,7 +48,12 @@ def pass_case(stock_c, targets_c, targets_v, bounds):
     print("Optimized solvent additions:\n", optimised_excess_volume)
 
 
-def fail_case(stock_c, targets_c, targets_v, bounds):
+def fail_case(
+    stock_c: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array2[np.float64],
+    bounds: list[tuple[float]],
+):
     """
     Parameters
     ----------
@@ -69,9 +89,9 @@ def fail_case(stock_c, targets_c, targets_v, bounds):
 
     targets_v = np.ones((3)) * 0.1  # Volumes for 3 samples
 
-    optimized_stock_c = pass_or_optimize(stock_c, targets_c, targets_v, bounds)
+    optimized_stock_c = validate_or_optimize(stock_c, targets_c, targets_v, bounds)
 
-    optimised_stock_v, optimised_excess_volume = test_stock_set(
+    optimised_stock_v, optimised_excess_volume = calculate_stock_volumes(
         optimized_stock_c, targets_c, targets_v
     )
 
@@ -101,9 +121,9 @@ def test():
 
     targets_v = np.ones((3)) * 0.1  # Volumes for 3 samples
 
-    optimized_stock_c = pass_or_optimize(stock_c, targets_c, targets_v, bounds)
+    optimized_stock_c = validate_or_optimize(stock_c, targets_c, targets_v, bounds)
 
-    optimised_stock_v, optimised_excess_volume = test_stock_set(
+    optimised_stock_v, optimised_excess_volume = calculate_stock_volumes(
         optimized_stock_c, targets_c, targets_v
     )
 
@@ -111,4 +131,3 @@ def test():
     print("Optimized stock volumes:\n", optimised_stock_v)
     print("Minimum stock volumes:\n", optimised_stock_v.sum(axis=0))
     print("Optimized solvent additions:\n", optimised_excess_volume)
-
