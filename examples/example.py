@@ -35,8 +35,8 @@ def run_from_files():
     stock_design["minimum_volume"] = stock_volumes.sum(axis=0)
     print(stock_design.head())
 
-    target_design = pd.DataFrame(stock_volumes,
-        columns=[f"{stock}_volume" for stock in stock_df.stock_name]
+    target_design = pd.DataFrame(
+        stock_volumes, columns=[f"{stock}_volume" for stock in stock_df.stock_name]
     )
     target_design["sample_name"] = target_df.sample_name
     target_design["solvent"] = solvent_volumes
@@ -46,10 +46,11 @@ def run_from_files():
     # Reorder columns for output
     cols = target_design.columns.to_list()
     cols.remove("sample_name")
-    cols  = ["sample_name"] + cols
+    cols = ["sample_name"] + cols
     target_design = target_design[cols]
     stock_design.to_csv("data/stocks_design.csv", index=False)
     target_design.to_csv("data/sample_volumes.csv", index=False)
+
 
 def main():
     run_from_files()
