@@ -21,6 +21,8 @@ pip install -e .
 
 ## Usage
 
+[Code documentation](https://will-robin.github.io/dilution_solver/dilution_solver.html).
+
 ### Beginning from a set of sample and stock concentrations
 
 1. Create a csv file of target concentrations and volumes. Each line should be
