@@ -80,7 +80,7 @@ def sobol_design(
     n_samples: int = 10,
     rng_seed: int = 42,
 ) -> Array2[np.float64]:
-    use_points = 1 << (n_samples - 1).bit_length()  # shift_bit_length(num_points)
+    use_points = 1 << (n_samples - 1).bit_length()
 
     if use_points != n_samples:
         print(
@@ -98,31 +98,8 @@ def sobol_design(
     return scaled_design
 
 
-def main_a():
-    print("Running Box-Behnken design example.")
-    # Specify input information
-    exp_code = "EXP001"
-
-    # Generate the design
-    n_factors = 3
-    factor_names = [f"factor_{x}" for x in range(n_factors)]
-    low = np.full(n_factors, 0.1)
-    high = np.full(n_factors, 1.2)
-    scaled_design = box_behnken_design(n_factors, low, high)
-
-    # Create output
-    df = pd.DataFrame(scaled_design, columns=[x for x in factor_names])
-    sample_names = [f"{exp_code}_{i:03}" for i in range(scaled_design.shape[0])]
-    df["sample_name"] = sample_names
-
-    # Reorder columns
-    cols = ["sample_name"] + [x for x in factor_names]
-    df = df[cols]
-
-    print(df.head())
-
-
 def main():
+    print("Testing full_factorial_design strategy.")
     # Specify input information
     exp_code = "EXP001"
 
