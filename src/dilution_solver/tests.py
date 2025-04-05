@@ -1,3 +1,6 @@
+"""
+WIP
+"""
 import numpy as np
 from .routines import calculate_stock_volumes
 from .routines import validate_or_optimize
