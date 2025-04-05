@@ -2,6 +2,7 @@
 Experiment design approaches for generating sets of samples and their
 concentrations given limits and an algorithm.
 """
+
 import scipy
 import pandas as pd
 import numpy as np
@@ -18,7 +19,7 @@ Array2 = Annotated[npt.NDArray[DType], Literal[2]]
 def box_behnken_design(
     low: Array1[np.float64],
     high: Array1[np.float64],
-    centers: int=1,
+    centers: int = 1,
 ) -> Array2[np.float64]:
     """
     Create a Box-Behnken design scaled to the low/high concentration ranges

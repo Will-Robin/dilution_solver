@@ -2,6 +2,7 @@
 Functions for calculating desired stock solution concentrations fit to a set of
 sample concentrations and volumes.
 """
+
 import numpy as np
 from scipy.optimize import minimize
 from typing import Annotated, Literal, TypeVar
