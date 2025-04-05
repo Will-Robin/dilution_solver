@@ -12,12 +12,15 @@ Array2 = Annotated[npt.NDArray[DType], Literal[2]]
 
 
 def box_behnken_design(
-    n_factors: int,
     low: Array1[np.float64],
     high: Array1[np.float64],
+    centers: int=1,
 ) -> Array2[np.float64]:
+
+    n_factors = low.shape[0]
+
     # Generate the design
-    design = pyDOE3.bbdesign(n_factors)
+    design = pyDOE3.bbdesign(n_factors, centers)
     # center design around 0.5
     design = (design - design.min()) / (design - design.min()).max()
 
@@ -28,11 +31,13 @@ def box_behnken_design(
 
 
 def full_factorial_design(
-    n_factors: int,
     low: Array1[np.float64],
     high: Array1[np.float64],
     levels: list[int] = [2],
 ) -> Array2[np.float64]:
+
+    n_factors = low.shape[0]
+
     design = pyDOE3.fullfact(levels)
 
     # Scale the design to the bounds
@@ -42,11 +47,13 @@ def full_factorial_design(
 
 
 def latin_hypercube_design(
-    n_factors: int,
     low: Array1[np.float64],
     high: Array1[np.float64],
     n_samples: int = 10,
 ) -> Array2[np.float64]:
+
+    n_factors = low.shape[0]
+
     lhs_sampler = scipy.stats.qmc.LatinHypercube(low.shape[0])
     design = lhs_sampler.random(n_samples)
 
@@ -57,12 +64,14 @@ def latin_hypercube_design(
 
 
 def random_design(
-    n_factors: int,
     low: Array1[np.float64],
     high: Array1[np.float64],
     n_samples: int = 10,
     rng_seed: int = 42,
 ) -> Array2[np.float64]:
+
+    n_factors = low.shape[0]
+
     np.random.seed(rng_seed)
 
     # Create a random grid scaled between 0 and 1
@@ -74,12 +83,14 @@ def random_design(
 
 
 def sobol_design(
-    n_factors: int,
     low: Array1[np.float64],
     high: Array1[np.float64],
     n_samples: int = 10,
     rng_seed: int = 42,
 ) -> Array2[np.float64]:
+
+    n_factors = low.shape[0]
+
     use_points = 1 << (n_samples - 1).bit_length()
 
     if use_points != n_samples:
@@ -99,7 +110,7 @@ def sobol_design(
 
 
 def main():
-    print("Testing full_factorial_design strategy.")
+    print("Running example full_factorial_design strategy.")
     # Specify input information
     exp_code = "EXP001"
 
@@ -109,7 +120,7 @@ def main():
     low = np.full(n_factors, 0.1)
     high = np.full(n_factors, 1.2)
     scaled_design = full_factorial_design(
-        n_factors, low, high, levels=[5 for x in range(low.shape[0])]
+        low, high, levels=[5 for x in range(low.shape[0])]
     )
 
     # Create output

@@ -22,8 +22,6 @@ pip install -e .
 
 ## Usage
 
-[Code documentation](https://will-robin.github.io/dilution_solver/dilution_solver.html).
-
 This code solves two problems:
 
 - 'I need to decide on a set of sample concentrations to prepare for my
@@ -66,7 +64,7 @@ n_factors = 3
 factor_names = [f"factor_{n}" for n in range(n_factors)]
 low = np.full(n_factors, 0.1)
 high = np.full(n_factors, 1.0)
-scaled_design = doe.box_behnken_design(n_factors, low, high)
+scaled_design = doe.box_behnken_design(low, high)
 
 # Create output
 df = pd.DataFrame(scaled_design, columns=[x for x in factor_names])
@@ -173,4 +171,8 @@ print(df.head())
    the script again to get the volumes required for each sample. If the
    process fails to suggest a feasible design, consider increasing the upper
    bound of each stock concentration.
+
+### More information
+
+[Browse the code here.](https://will-robin.github.io/dilution_solver/dilution_solver.html).
 

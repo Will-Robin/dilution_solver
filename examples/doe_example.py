@@ -15,7 +15,7 @@ def main():
     n_factors = ranges.compound_name.shape[0]
     low = ranges.lower_bound.to_numpy()
     high = ranges.upper_bound.to_numpy()
-    scaled_design = doe.box_behnken_design(n_factors, low, high)
+    scaled_design = doe.box_behnken_design(low, high)
 
     # Create output
     df = pd.DataFrame(scaled_design, columns=[x for x in ranges.compound_name])
