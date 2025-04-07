@@ -148,10 +148,9 @@ def random_design(
 
     n_factors = low.shape[0]
 
-    np.random.seed(rng_seed)
+    rng = np.random.default_rng(seed=rng_seed)
 
-    # Create a random grid scaled between 0 and 1
-    design = np.random.rand(n_samples, low.shape[0])
+    design = rng.uniform(low=0.0, high=1.0, size=(n_samples, low.shape[0]))
 
     scaled_design = design * (high - low) + low
 
