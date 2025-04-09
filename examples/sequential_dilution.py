@@ -9,6 +9,62 @@ from dilution_solver.routines import calculate_stock_volumes
 from dilution_solver.routines import validate_or_optimize
 
 
+def check_volume_feasibility(
+    stock_volumes, solvent_volumes, stock_concs, targets_c, targets_v, min_volume
+):
+    new_stock_volumes = stock_volumes.copy()
+    new_stock_concs = stock_concs.copy()
+    updated_stocks = []
+
+    for i in range(0, stock_volumes.shape[1]):
+        # First, find volumes which are lower than min_volume
+        too_low = stock_volumes[:, i] < min_volume
+
+        # TODO: account for not having to update all stocks for all unfeasible
+        # samples - target the specific volumes, rather than the whole sample.
+        if np.any(too_low):
+            # Determine which stocks need diluting
+            idx = np.where(too_low)
+
+            # Select the samples containing the unfeasible volumes
+            unfeasible_samples_v = stock_volumes[idx]
+
+            # Set aside the feasible samples
+            feasible_samples_v = np.delete(stock_volumes, idx, axis=0)
+
+            # Get the lowest unfeasible stock volumes per stock
+            min_vals = unfeasible_samples_v[:, i].min(axis=0)
+
+            # Calculate factors which the stock_conc must be multiplied by for an
+            # addition of min_volume to work.
+            factors = min_vals / min_volume
+
+            # Calculate the updated stock concentrations
+            new_stock_concs[i] *= factors
+
+            # Now, the stock_volumes for the unfeasible_samples must be updated
+            new_stock_volumes[idx, i] /= factors
+
+            # Check if the samples will overflow
+            new_tot_vol = np.sum(new_stock_volumes, axis=1)
+            solv_vol = targets_v - new_tot_vol
+
+            if np.any(solv_vol < 0.0):
+                print("error")
+                wrong_idx = np.where(solv_vol < 0.0)
+                print(f"Sample(s) {wrong_idx} too high in volume.")
+
+            # Keep track of updated stock concentrations
+            updated_stocks.append(i)
+
+            print(f"Updated stock {i}.")
+            print(stock_volumes)
+            print(new_stock_volumes)
+            print(stock_concs)
+            print(new_stock_concs)
+            print()
+
+
 def sequential_dilution():
     """
     It is possible to solve for the dilution of any compound into any sample,
@@ -54,32 +110,9 @@ def sequential_dilution():
         stock_concs, targets_c, targets_v
     )
 
-    # First, find volumes which are lower than min_volume
-    stock_volumes[1, 2] = 0.00001
-    too_low = stock_volumes < min_volume
-    if np.any(too_low):
-        # Determine which stocks need diluting
-        idx = np.where(too_low)
-        sample_indices = idx[0]  # samples which need to be updated
-        stock_indices = idx[1]  # stocks to be diluted
-
-        # Set initial stock transfer volumes to zero
-        stock_volumes[idx] = 0.0
-        # Add a new column for a volume of a new stock with the minimum volume
-        print(stock_volumes.shape)
-        stock_volumes = np.hstack((stock_volumes, np.zeros((stock_volumes.shape[0], 1))))
-        stock_volumes[sample_indices, -1] = min_volume
-
-        # Now, calculate the stock concentration based on the minimum volume
-        concentrations = targets_c[idx]
-        # c = m/v
-        moles = concentrations * min_volume
-        print(concentrations)
-
-        # Now, we need to back-calculate the number of moles required to be in
-        # the updated volumes, based on the sample concentration
-        # the volumes to be pipetted for the stocks are now fixed.
-        # Therefore, calculate the moles from them
+    check_volume_feasibility(
+        stock_volumes, solvent_volumes, stock_concs, targets_c, targets_v, min_volume
+    )
 
 
 def main():

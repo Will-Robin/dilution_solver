@@ -1,5 +1,5 @@
 stock_name,concentration,lower_bound,upper_bound
 stock_01,10.0,1.0,20.0
 stock_02,0.4,0.001,4.0
-stock_03,0.5,0.001,4.0
+stock_03,15.0,0.001,20.0
 stock_04,0.4,0.001,4.0
