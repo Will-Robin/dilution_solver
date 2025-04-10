@@ -58,10 +58,40 @@ def calculate_stock_volumes(
     return stock_v, excess_volume
 
 
+def calculate_sample_concentrations(
+    stock_c: Array1[np.float64],
+    stock_v: Array2[np.float64],
+    targets_v: Array1[np.float64],
+):
+    """
+    Calculate the concentration of a dilution scheme.
+
+    Parameters
+    ----------
+    stock_c: Array1[np.float64]
+        Concentrations of stock solutions (n x 1 for n stocks).
+
+    stock_v: Array2[np.float64]
+        Stock solution addition volumes.
+
+    targets_v: Array1[np.float64]
+        Intended target solution volumes (m x 1 for m samples).
+
+    Returns
+    -------
+    concentrations: Array2[np.float64]
+        Resulting array of concentrations.
+    """
+
+    concentrations = stock_v * stock_c / targets_v[:, np.newaxis]
+
+    return concentrations
+
+
 def evaluate_stock_concentrations(
     stock_c: Array1[np.float64],
     targets_c: Array2[np.float64],
-    targets_v: Array2[np.float64],
+    targets_v: Array1[np.float64],
 ) -> float:
     """
     Calculate the error of a proposed stock concentration (stock_c) for an
@@ -96,7 +126,7 @@ def evaluate_stock_concentrations(
 def optimize_stock_concentrations(
     stock_c: Array1[np.float64],
     targets_c: Array2[np.float64],
-    targets_v: Array2[np.float64],
+    targets_v: Array1[np.float64],
     bounds: list[tuple[float]],
 ) -> Array1[np.float64]:
     """
@@ -112,7 +142,7 @@ def optimize_stock_concentrations(
     targets_c: Array2[np.float64]
         Concentrations of stock solutions (m x n for m samples and n stocks).
 
-    targets_v: Array2[np.float64]
+    targets_v: Array1[np.float64]
         Intended target solution volumes (m x 1 for m samples).
 
     bounds: list(tuple(float))
@@ -156,7 +186,7 @@ def optimize_stock_concentrations(
 def validate_or_optimize(
     stock_c: Array1[np.float64],
     targets_c: Array2[np.float64],
-    targets_v: Array2[np.float64],
+    targets_v: Array1[np.float64],
     bounds: list[tuple[float]],
 ) -> Array1[np.float64]:
     """
@@ -168,10 +198,10 @@ def validate_or_optimize(
     stock_c: np.array
         Concentrations of stock solutions (n x 1 for n stocks).
 
-    targets_c: np.array
+    targets_c:
         Concentrations of stock solutions (m x n for m samples and n stocks).
 
-    targets_v: np.array
+    targets_v: Array1[np.float64]
         Intended target solution volumes (m x 1 for m samples).
 
     bounds: list(tuple(float))

@@ -128,6 +128,9 @@ def sequential_dilution():
         stock_volumes, solvent_volumes, stock_concs, targets_c, targets_v, min_volume
     )
 
+    calculate_sample_concentrations(new_stock_concs, new_stock_volumes, targets_v)
+
+
 def main():
     sequential_dilution()
 
