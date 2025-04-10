@@ -75,8 +75,6 @@ def full_factorial_design(
     scaled_design: Array2[np.float64]
     """
 
-    n_factors = low.shape[0]
-
     design = pyDOE3.fullfact(levels)
 
     # Scale the design to the bounds
@@ -108,8 +106,6 @@ def latin_hypercube_design(
     -------
     scaled_design: Array2[np.float64]
     """
-
-    n_factors = low.shape[0]
 
     lhs_sampler = scipy.stats.qmc.LatinHypercube(low.shape[0])
     design = lhs_sampler.random(n_samples)
@@ -146,8 +142,6 @@ def random_design(
     scaled_design: Array2[np.float64]
     """
 
-    n_factors = low.shape[0]
-
     rng = np.random.default_rng(seed=rng_seed)
 
     design = rng.uniform(low=0.0, high=1.0, size=(n_samples, low.shape[0]))
@@ -183,8 +177,6 @@ def sobol_design(
     -------
     scaled_design: Array2[np.float64]
     """
-
-    n_factors = low.shape[0]
 
     use_points = 1 << (n_samples - 1).bit_length()
 

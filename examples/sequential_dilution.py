@@ -4,7 +4,6 @@ in comparison to the stock solution must be prepared.
 """
 
 import pandas as pd
-import numpy as np
 from dilution_solver.routines import calculate_stock_volumes
 from dilution_solver.routines import validate_or_optimize
 from dilution_solver.routines import calculate_sample_concentrations

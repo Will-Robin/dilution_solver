@@ -13,7 +13,6 @@ def main():
     ranges = pd.read_csv("data/sample_ranges.csv")
 
     # Generate the design
-    n_factors = ranges.compound_name.shape[0]
     low = ranges.lower_bound.to_numpy()
     high = ranges.upper_bound.to_numpy()
     scaled_design = doe.box_behnken_design(low, high)
