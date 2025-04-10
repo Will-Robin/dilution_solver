@@ -225,3 +225,99 @@ def validate_or_optimize(
         optimized_stock_c = stock_c
 
     return optimized_stock_c
+
+
+def create_sequential_dilutions(
+    stock_volumes: Array2[np.float64],
+    solvent_volumes: Array2[np.float64],
+    stock_concs: Array1[np.float64],
+    targets_c: Array2[np.float64],
+    targets_v: Array1[np.float64],
+    min_volume: float,
+):
+    """
+    Finds which volumes in stock_volumes is lower than the minimum volume which
+    can be transferred (min_volume), and creates new stock solutions which
+    allow for sample transfer to go ahead.
+
+    Parameters
+    ----------
+    stock_volumes: Array2[np.float64]
+    solvent_volumes: Array2[np.float64]
+    stock_concs: Array1[np.float64]
+    targets_c: Array2[np.float64]
+    targets_v: Array1[np.float64]
+    min_volume: float
+
+    Returns
+    -------
+    (new_stock_volumes, new_stock_concs, diluted_stocks):
+        tuple[Array2[np.float64], Array1[np.float64], list[int]]
+        A new stock pipetting scheme, with additional columns for the new stock
+        solutions required. The new stock concentrations, with diluted stocks
+        appended. The indices of which stocks are required to be diluted (from
+        the original stock array).
+    """
+    new_stock_volumes = stock_volumes.copy()
+    new_stock_concs = stock_concs.copy()
+    diluted_stocks = []
+
+    for i in range(0, stock_volumes.shape[1]):
+        # First, find volumes which are lower than min_volume
+        too_low = stock_volumes[:, i] < min_volume
+
+        # TODO: account for not having to update all stocks for all unfeasible
+        # samples - target the specific volumes, rather than the whole sample.
+        if np.any(too_low):
+            # Record that the stock was diluted
+            diluted_stocks.append(i)
+
+            # Determine which stocks need diluting
+            # idx = indices of volumes which need updating
+            idx = np.where(too_low)
+
+            # Get the lowest unfeasible stock volumes per stock
+            min_vals = stock_volumes[idx, i].min(axis=0).min()
+
+            # Calculate factor by which the stock_conc must be multiplied by
+            # for an addition of min_volume to work.
+            factor = min_vals / min_volume
+
+            # Calculate the updated stock concentrations and add to
+            # new stock concentrations
+            updated_stock_conc = stock_concs[i] * factor
+            new_stock_concs = np.hstack((new_stock_concs, updated_stock_conc))
+
+            # Now, calculate the volumes required for the new stock applied to
+            # the unfeasible samples
+            updated_stock_volume = stock_volumes[idx, i] / factor
+
+            # update the volume array
+            # 1. Remove additions of the previous stock
+            new_stock_volumes[idx, i] = 0.0
+
+            # 2. Add the new stock volumes to the updated stock_volume array
+            new_stock_volumes = np.hstack(
+                (new_stock_volumes, np.zeros((new_stock_volumes.shape[0], 1)))
+            )
+
+            new_stock_volumes[idx, -1] = updated_stock_volume
+
+    # Check if the samples will overflow
+    new_tot_vol = np.sum(new_stock_volumes, axis=1)
+    solv_vol = targets_v - new_tot_vol
+
+    check_volumes = solv_vol < 0.0
+    if np.any(check_volumes):
+        print("error")
+        problem_idx = np.where(check_volumes)[0]
+        print(f"Sample(s) {problem_idx} too high in volume.")
+        print("Sample volume update failed.")
+        print("The negative volumes in this array are the reason:")
+        print(solv_vol)
+        print(
+            f"Consider increasing the concentrations of stock solutions other than {i}."
+        )
+        print()
+
+    return new_stock_volumes, new_stock_concs, diluted_stocks
