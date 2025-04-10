@@ -166,7 +166,38 @@ print(df.head())
   target_design.to_csv("data/sample_volumes.csv", index=False)
   ```
 
-4. You can either go ahead with the design suggested by the software, or round
+4. The volumes suggested could be unfeasible (for instance, they may require the
+   transfer of nL volumes, but the equipment you have available cannot transfer
+   such small volumes). In this case, you can attempt to calculate a new liquid
+   transfer scheme and set of stock solutions by creating diluted versions of
+   existing stocks. The function `create_sequential_dilutions` attempts to do
+   this automatically:
+
+  ```python
+  from dilution_solver.routines import create_sequential_dilutions
+  # Lowest volume which can be transferred
+  min_volume = 0.005
+
+  # variables loaded in the snippet above.
+  stock_volumes, solvent_volumes = calculate_stock_volumes(
+        stock_concs, targets_c, targets_v
+  )
+
+  new_stock_volumes, new_stock_concs, diluted_stocks = create_sequential_dilutions(
+        stock_volumes,
+        solvent_volumes,
+        stock_concs,
+        targets_c,
+        targets_v,
+        min_volume,
+  )
+  ```
+
+  This step is optional. You could also attempt to lower the upper bounds of the
+  stock concentrations to solve this. Always inspect the output and check that
+  everything makes sense.
+
+5. You can either go ahead with the design suggested by the software, or round
    up the suggested values it gives to make preparation more convenient and run
    the script again to get the volumes required for each sample. If the
    process fails to suggest a feasible design, consider increasing the upper
