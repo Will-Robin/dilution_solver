@@ -42,6 +42,9 @@
             <li>
                     <a class="function" href="#calculate_sample_concentrations">calculate_sample_concentrations</a>
             </li>
+            <li>
+                    <a class="function" href="#create_sequential_dilutions">create_sequential_dilutions</a>
+            </li>
     </ul>
 
 
@@ -67,13 +70,15 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.routines</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize_stock_concentrations</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.routines</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_or_optimize</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.routines</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_sample_concentrations</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="s2">&quot;calculate_stock_volumes&quot;</span><span class="p">,</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="s2">&quot;optimize_stock_concentrations&quot;</span><span class="p">,</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;validate_or_optimize&quot;</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="s2">&quot;calculate_sample_concentrations&quot;</span><span class="p">,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="p">]</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.routines</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_sequential_dilutions</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="s2">&quot;calculate_stock_volumes&quot;</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;optimize_stock_concentrations&quot;</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="s2">&quot;validate_or_optimize&quot;</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="s2">&quot;calculate_sample_concentrations&quot;</span><span class="p">,</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="s2">&quot;create_sequential_dilutions&quot;</span><span class="p">,</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="p">]</span>
 </span></pre></div>
 
 
@@ -401,6 +406,142 @@ Intended target solution volumes (m x 1 for m samples).</li>
 <ul>
 <li><strong>concentrations</strong> (Array2[np.float64]):
 Resulting array of concentrations.</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="create_sequential_dilutions">
+                            <input id="create_sequential_dilutions-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">create_sequential_dilutions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">stock_volumes</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>,</span><span class="param">	<span class="n">solvent_volumes</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>,</span><span class="param">	<span class="n">stock_concs</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>,</span><span class="param">	<span class="n">targets_c</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>,</span><span class="param">	<span class="n">targets_v</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">]],</span> <span class="n">Literal</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>,</span><span class="param">	<span class="n">min_volume</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="create_sequential_dilutions-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#create_sequential_dilutions"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_sequential_dilutions-231"><a href="#create_sequential_dilutions-231"><span class="linenos">231</span></a><span class="k">def</span><span class="w"> </span><span class="nf">create_sequential_dilutions</span><span class="p">(</span>
+</span><span id="create_sequential_dilutions-232"><a href="#create_sequential_dilutions-232"><span class="linenos">232</span></a>    <span class="n">stock_volumes</span><span class="p">:</span> <span class="n">Array2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+</span><span id="create_sequential_dilutions-233"><a href="#create_sequential_dilutions-233"><span class="linenos">233</span></a>    <span class="n">solvent_volumes</span><span class="p">:</span> <span class="n">Array2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+</span><span id="create_sequential_dilutions-234"><a href="#create_sequential_dilutions-234"><span class="linenos">234</span></a>    <span class="n">stock_concs</span><span class="p">:</span> <span class="n">Array1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+</span><span id="create_sequential_dilutions-235"><a href="#create_sequential_dilutions-235"><span class="linenos">235</span></a>    <span class="n">targets_c</span><span class="p">:</span> <span class="n">Array2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+</span><span id="create_sequential_dilutions-236"><a href="#create_sequential_dilutions-236"><span class="linenos">236</span></a>    <span class="n">targets_v</span><span class="p">:</span> <span class="n">Array1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+</span><span id="create_sequential_dilutions-237"><a href="#create_sequential_dilutions-237"><span class="linenos">237</span></a>    <span class="n">min_volume</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="create_sequential_dilutions-238"><a href="#create_sequential_dilutions-238"><span class="linenos">238</span></a><span class="p">):</span>
+</span><span id="create_sequential_dilutions-239"><a href="#create_sequential_dilutions-239"><span class="linenos">239</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="create_sequential_dilutions-240"><a href="#create_sequential_dilutions-240"><span class="linenos">240</span></a><span class="sd">    Finds which volumes in stock_volumes is lower than the minimum volume which</span>
+</span><span id="create_sequential_dilutions-241"><a href="#create_sequential_dilutions-241"><span class="linenos">241</span></a><span class="sd">    can be transferred (min_volume), and creates new stock solutions which</span>
+</span><span id="create_sequential_dilutions-242"><a href="#create_sequential_dilutions-242"><span class="linenos">242</span></a><span class="sd">    allow for sample transfer to go ahead.</span>
+</span><span id="create_sequential_dilutions-243"><a href="#create_sequential_dilutions-243"><span class="linenos">243</span></a>
+</span><span id="create_sequential_dilutions-244"><a href="#create_sequential_dilutions-244"><span class="linenos">244</span></a><span class="sd">    Parameters</span>
+</span><span id="create_sequential_dilutions-245"><a href="#create_sequential_dilutions-245"><span class="linenos">245</span></a><span class="sd">    ----------</span>
+</span><span id="create_sequential_dilutions-246"><a href="#create_sequential_dilutions-246"><span class="linenos">246</span></a><span class="sd">    stock_volumes: Array2[np.float64]</span>
+</span><span id="create_sequential_dilutions-247"><a href="#create_sequential_dilutions-247"><span class="linenos">247</span></a><span class="sd">    solvent_volumes: Array2[np.float64]</span>
+</span><span id="create_sequential_dilutions-248"><a href="#create_sequential_dilutions-248"><span class="linenos">248</span></a><span class="sd">    stock_concs: Array1[np.float64]</span>
+</span><span id="create_sequential_dilutions-249"><a href="#create_sequential_dilutions-249"><span class="linenos">249</span></a><span class="sd">    targets_c: Array2[np.float64]</span>
+</span><span id="create_sequential_dilutions-250"><a href="#create_sequential_dilutions-250"><span class="linenos">250</span></a><span class="sd">    targets_v: Array1[np.float64]</span>
+</span><span id="create_sequential_dilutions-251"><a href="#create_sequential_dilutions-251"><span class="linenos">251</span></a><span class="sd">    min_volume: float</span>
+</span><span id="create_sequential_dilutions-252"><a href="#create_sequential_dilutions-252"><span class="linenos">252</span></a>
+</span><span id="create_sequential_dilutions-253"><a href="#create_sequential_dilutions-253"><span class="linenos">253</span></a><span class="sd">    Returns</span>
+</span><span id="create_sequential_dilutions-254"><a href="#create_sequential_dilutions-254"><span class="linenos">254</span></a><span class="sd">    -------</span>
+</span><span id="create_sequential_dilutions-255"><a href="#create_sequential_dilutions-255"><span class="linenos">255</span></a><span class="sd">    (new_stock_volumes, new_stock_concs, diluted_stocks):</span>
+</span><span id="create_sequential_dilutions-256"><a href="#create_sequential_dilutions-256"><span class="linenos">256</span></a><span class="sd">        tuple[Array2[np.float64], Array1[np.float64], list[int]]</span>
+</span><span id="create_sequential_dilutions-257"><a href="#create_sequential_dilutions-257"><span class="linenos">257</span></a><span class="sd">        A new stock pipetting scheme, with additional columns for the new stock</span>
+</span><span id="create_sequential_dilutions-258"><a href="#create_sequential_dilutions-258"><span class="linenos">258</span></a><span class="sd">        solutions required. The new stock concentrations, with diluted stocks</span>
+</span><span id="create_sequential_dilutions-259"><a href="#create_sequential_dilutions-259"><span class="linenos">259</span></a><span class="sd">        appended. The indices of which stocks are required to be diluted (from</span>
+</span><span id="create_sequential_dilutions-260"><a href="#create_sequential_dilutions-260"><span class="linenos">260</span></a><span class="sd">        the original stock array).</span>
+</span><span id="create_sequential_dilutions-261"><a href="#create_sequential_dilutions-261"><span class="linenos">261</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_sequential_dilutions-262"><a href="#create_sequential_dilutions-262"><span class="linenos">262</span></a>    <span class="n">new_stock_volumes</span> <span class="o">=</span> <span class="n">stock_volumes</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="create_sequential_dilutions-263"><a href="#create_sequential_dilutions-263"><span class="linenos">263</span></a>    <span class="n">new_stock_concs</span> <span class="o">=</span> <span class="n">stock_concs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="create_sequential_dilutions-264"><a href="#create_sequential_dilutions-264"><span class="linenos">264</span></a>    <span class="n">diluted_stocks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="create_sequential_dilutions-265"><a href="#create_sequential_dilutions-265"><span class="linenos">265</span></a>
+</span><span id="create_sequential_dilutions-266"><a href="#create_sequential_dilutions-266"><span class="linenos">266</span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stock_volumes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+</span><span id="create_sequential_dilutions-267"><a href="#create_sequential_dilutions-267"><span class="linenos">267</span></a>        <span class="c1"># First, find volumes which are lower than min_volume</span>
+</span><span id="create_sequential_dilutions-268"><a href="#create_sequential_dilutions-268"><span class="linenos">268</span></a>        <span class="n">too_low</span> <span class="o">=</span> <span class="n">stock_volumes</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_volume</span>
+</span><span id="create_sequential_dilutions-269"><a href="#create_sequential_dilutions-269"><span class="linenos">269</span></a>
+</span><span id="create_sequential_dilutions-270"><a href="#create_sequential_dilutions-270"><span class="linenos">270</span></a>        <span class="c1"># TODO: account for not having to update all stocks for all unfeasible</span>
+</span><span id="create_sequential_dilutions-271"><a href="#create_sequential_dilutions-271"><span class="linenos">271</span></a>        <span class="c1"># samples - target the specific volumes, rather than the whole sample.</span>
+</span><span id="create_sequential_dilutions-272"><a href="#create_sequential_dilutions-272"><span class="linenos">272</span></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">too_low</span><span class="p">):</span>
+</span><span id="create_sequential_dilutions-273"><a href="#create_sequential_dilutions-273"><span class="linenos">273</span></a>            <span class="c1"># Record that the stock was diluted</span>
+</span><span id="create_sequential_dilutions-274"><a href="#create_sequential_dilutions-274"><span class="linenos">274</span></a>            <span class="n">diluted_stocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-275"><a href="#create_sequential_dilutions-275"><span class="linenos">275</span></a>
+</span><span id="create_sequential_dilutions-276"><a href="#create_sequential_dilutions-276"><span class="linenos">276</span></a>            <span class="c1"># Determine which stocks need diluting</span>
+</span><span id="create_sequential_dilutions-277"><a href="#create_sequential_dilutions-277"><span class="linenos">277</span></a>            <span class="c1"># idx = indices of volumes which need updating</span>
+</span><span id="create_sequential_dilutions-278"><a href="#create_sequential_dilutions-278"><span class="linenos">278</span></a>            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">too_low</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-279"><a href="#create_sequential_dilutions-279"><span class="linenos">279</span></a>
+</span><span id="create_sequential_dilutions-280"><a href="#create_sequential_dilutions-280"><span class="linenos">280</span></a>            <span class="c1"># Get the lowest unfeasible stock volumes per stock</span>
+</span><span id="create_sequential_dilutions-281"><a href="#create_sequential_dilutions-281"><span class="linenos">281</span></a>            <span class="n">min_vals</span> <span class="o">=</span> <span class="n">stock_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</span><span id="create_sequential_dilutions-282"><a href="#create_sequential_dilutions-282"><span class="linenos">282</span></a>
+</span><span id="create_sequential_dilutions-283"><a href="#create_sequential_dilutions-283"><span class="linenos">283</span></a>            <span class="c1"># Calculate factor by which the stock_conc must be multiplied by</span>
+</span><span id="create_sequential_dilutions-284"><a href="#create_sequential_dilutions-284"><span class="linenos">284</span></a>            <span class="c1"># for an addition of min_volume to work.</span>
+</span><span id="create_sequential_dilutions-285"><a href="#create_sequential_dilutions-285"><span class="linenos">285</span></a>            <span class="n">factor</span> <span class="o">=</span> <span class="n">min_vals</span> <span class="o">/</span> <span class="n">min_volume</span>
+</span><span id="create_sequential_dilutions-286"><a href="#create_sequential_dilutions-286"><span class="linenos">286</span></a>
+</span><span id="create_sequential_dilutions-287"><a href="#create_sequential_dilutions-287"><span class="linenos">287</span></a>            <span class="c1"># Calculate the updated stock concentrations and add to</span>
+</span><span id="create_sequential_dilutions-288"><a href="#create_sequential_dilutions-288"><span class="linenos">288</span></a>            <span class="c1"># new stock concentrations</span>
+</span><span id="create_sequential_dilutions-289"><a href="#create_sequential_dilutions-289"><span class="linenos">289</span></a>            <span class="n">updated_stock_conc</span> <span class="o">=</span> <span class="n">stock_concs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span>
+</span><span id="create_sequential_dilutions-290"><a href="#create_sequential_dilutions-290"><span class="linenos">290</span></a>            <span class="n">new_stock_concs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">new_stock_concs</span><span class="p">,</span> <span class="n">updated_stock_conc</span><span class="p">))</span>
+</span><span id="create_sequential_dilutions-291"><a href="#create_sequential_dilutions-291"><span class="linenos">291</span></a>
+</span><span id="create_sequential_dilutions-292"><a href="#create_sequential_dilutions-292"><span class="linenos">292</span></a>            <span class="c1"># Now, calculate the volumes required for the new stock applied to</span>
+</span><span id="create_sequential_dilutions-293"><a href="#create_sequential_dilutions-293"><span class="linenos">293</span></a>            <span class="c1"># the unfeasible samples</span>
+</span><span id="create_sequential_dilutions-294"><a href="#create_sequential_dilutions-294"><span class="linenos">294</span></a>            <span class="n">updated_stock_volume</span> <span class="o">=</span> <span class="n">stock_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">factor</span>
+</span><span id="create_sequential_dilutions-295"><a href="#create_sequential_dilutions-295"><span class="linenos">295</span></a>
+</span><span id="create_sequential_dilutions-296"><a href="#create_sequential_dilutions-296"><span class="linenos">296</span></a>            <span class="c1"># update the volume array</span>
+</span><span id="create_sequential_dilutions-297"><a href="#create_sequential_dilutions-297"><span class="linenos">297</span></a>            <span class="c1"># 1. Remove additions of the previous stock</span>
+</span><span id="create_sequential_dilutions-298"><a href="#create_sequential_dilutions-298"><span class="linenos">298</span></a>            <span class="n">new_stock_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span><span id="create_sequential_dilutions-299"><a href="#create_sequential_dilutions-299"><span class="linenos">299</span></a>
+</span><span id="create_sequential_dilutions-300"><a href="#create_sequential_dilutions-300"><span class="linenos">300</span></a>            <span class="c1"># 2. Add the new stock volumes to the updated stock_volume array</span>
+</span><span id="create_sequential_dilutions-301"><a href="#create_sequential_dilutions-301"><span class="linenos">301</span></a>            <span class="n">new_stock_volumes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span>
+</span><span id="create_sequential_dilutions-302"><a href="#create_sequential_dilutions-302"><span class="linenos">302</span></a>                <span class="p">(</span><span class="n">new_stock_volumes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">new_stock_volumes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)))</span>
+</span><span id="create_sequential_dilutions-303"><a href="#create_sequential_dilutions-303"><span class="linenos">303</span></a>            <span class="p">)</span>
+</span><span id="create_sequential_dilutions-304"><a href="#create_sequential_dilutions-304"><span class="linenos">304</span></a>
+</span><span id="create_sequential_dilutions-305"><a href="#create_sequential_dilutions-305"><span class="linenos">305</span></a>            <span class="n">new_stock_volumes</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_stock_volume</span>
+</span><span id="create_sequential_dilutions-306"><a href="#create_sequential_dilutions-306"><span class="linenos">306</span></a>
+</span><span id="create_sequential_dilutions-307"><a href="#create_sequential_dilutions-307"><span class="linenos">307</span></a>    <span class="c1"># Check if the samples will overflow</span>
+</span><span id="create_sequential_dilutions-308"><a href="#create_sequential_dilutions-308"><span class="linenos">308</span></a>    <span class="n">new_tot_vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">new_stock_volumes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-309"><a href="#create_sequential_dilutions-309"><span class="linenos">309</span></a>    <span class="n">solv_vol</span> <span class="o">=</span> <span class="n">targets_v</span> <span class="o">-</span> <span class="n">new_tot_vol</span>
+</span><span id="create_sequential_dilutions-310"><a href="#create_sequential_dilutions-310"><span class="linenos">310</span></a>
+</span><span id="create_sequential_dilutions-311"><a href="#create_sequential_dilutions-311"><span class="linenos">311</span></a>    <span class="n">check_volumes</span> <span class="o">=</span> <span class="n">solv_vol</span> <span class="o">&lt;</span> <span class="mf">0.0</span>
+</span><span id="create_sequential_dilutions-312"><a href="#create_sequential_dilutions-312"><span class="linenos">312</span></a>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">check_volumes</span><span class="p">):</span>
+</span><span id="create_sequential_dilutions-313"><a href="#create_sequential_dilutions-313"><span class="linenos">313</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-314"><a href="#create_sequential_dilutions-314"><span class="linenos">314</span></a>        <span class="n">problem_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">check_volumes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="create_sequential_dilutions-315"><a href="#create_sequential_dilutions-315"><span class="linenos">315</span></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample(s) </span><span class="si">{</span><span class="n">problem_idx</span><span class="si">}</span><span class="s2"> too high in volume.&quot;</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-316"><a href="#create_sequential_dilutions-316"><span class="linenos">316</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample volume update failed.&quot;</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-317"><a href="#create_sequential_dilutions-317"><span class="linenos">317</span></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The negative volumes in this array are the reason:&quot;</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-318"><a href="#create_sequential_dilutions-318"><span class="linenos">318</span></a>        <span class="nb">print</span><span class="p">(</span><span class="n">solv_vol</span><span class="p">)</span>
+</span><span id="create_sequential_dilutions-319"><a href="#create_sequential_dilutions-319"><span class="linenos">319</span></a>        <span class="nb">print</span><span class="p">(</span>
+</span><span id="create_sequential_dilutions-320"><a href="#create_sequential_dilutions-320"><span class="linenos">320</span></a>            <span class="sa">f</span><span class="s2">&quot;Consider increasing the concentrations of stock solutions other than </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span id="create_sequential_dilutions-321"><a href="#create_sequential_dilutions-321"><span class="linenos">321</span></a>        <span class="p">)</span>
+</span><span id="create_sequential_dilutions-322"><a href="#create_sequential_dilutions-322"><span class="linenos">322</span></a>        <span class="nb">print</span><span class="p">()</span>
+</span><span id="create_sequential_dilutions-323"><a href="#create_sequential_dilutions-323"><span class="linenos">323</span></a>
+</span><span id="create_sequential_dilutions-324"><a href="#create_sequential_dilutions-324"><span class="linenos">324</span></a>    <span class="k">return</span> <span class="n">new_stock_volumes</span><span class="p">,</span> <span class="n">new_stock_concs</span><span class="p">,</span> <span class="n">diluted_stocks</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Finds which volumes in stock_volumes is lower than the minimum volume which
+can be transferred (min_volume), and creates new stock solutions which
+allow for sample transfer to go ahead.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><p><strong>stock_volumes</strong> (Array2[np.float64]):</p></li>
+<li><p><strong>solvent_volumes</strong> (Array2[np.float64]):</p></li>
+<li><p><strong>stock_concs</strong> (Array1[np.float64]):</p></li>
+<li><p><strong>targets_c</strong> (Array2[np.float64]):</p></li>
+<li><p><strong>targets_v</strong> (Array1[np.float64]):</p></li>
+<li><p><strong>min_volume</strong> (float):</p></li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>(new_stock_volumes, new_stock_concs, diluted_stocks):</strong>: tuple[Array2[np.float64], Array1[np.float64], list[int]]
+A new stock pipetting scheme, with additional columns for the new stock
+solutions required. The new stock concentrations, with diluted stocks
+appended. The indices of which stocks are required to be diluted (from
+the original stock array).</li>
 </ul>
 </div>
 
