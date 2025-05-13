@@ -3,6 +3,11 @@
 Aims to figure out stock solution concentrations and dilution schemes for a
 specified set of concentrations.
 
+[Installation](#installation)
+[Usage](#usage)
+[Examples](#examples)
+[More Information](#more-information)
+
 ## Installation
 
 Create a virtual environment in your preferred way, the install the following
@@ -202,6 +207,15 @@ print(df.head())
    the script again to get the volumes required for each sample. If the
    process fails to suggest a feasible design, consider increasing the upper
    bound of each stock concentration.
+
+### Examples
+
+The examples are written to be run from the repository's root directory. To run
+one in the command line, type:
+
+```shell
+python examples/example.py
+```
 
 ### More information
 
