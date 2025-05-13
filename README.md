@@ -3,10 +3,12 @@
 Aims to figure out stock solution concentrations and dilution schemes for a
 specified set of concentrations.
 
-[Installation](#installation)
-[Usage](#usage)
-[Examples](#examples)
-[More Information](#more-information)
+## Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [More Information](#more-information)
 
 ## Installation
 
