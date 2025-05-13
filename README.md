@@ -31,14 +31,14 @@ pip install -e .
 
 This code solves two problems:
 
-- 'I need to decide on a set of sample concentrations to prepare for my
+1. 'I need to decide on a set of sample concentrations to prepare for my
   experiment'
-- 'I know which sample concentrations I would like to try, but I need to know
+2. 'I know which sample concentrations I would like to try, but I need to know
   which concentrations of stock solutions to prepare, and how much should be
   added to each sample'
 
 
-### I need to decide on a set of sample concentrations to prepare
+### 1. I need to decide on a set of sample concentrations to prepare
 
 In this case, we can start with design of experiments (DoE) approaches in the
 `dilution_solver.doe` module (see also [PyDOE3](https://github.com/relf/pyDOE3),
@@ -85,7 +85,7 @@ df = df[cols]
 print(df.head())
 ```
 
-### I know which sample concentrations I would like to try, but I need to know which concentrations of stock solutions to prepare, and how much should be added to each sample
+### 2. I know which sample concentrations I would like to try, but I need to know which concentrations of stock solutions to prepare, and how much should be added to each sample
 
 1. Create a csv file of target concentrations and volumes. Each line should be
    a sample, the concentration of each component is a column, and one column
