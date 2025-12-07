@@ -9,7 +9,7 @@ from dilution_solver import doe
 
 def main():
     # Specify input information
-    exp_code = "VPR001"
+    exp_code = "EXP001"
     ranges = pd.read_csv("data/sample_ranges.csv")
 
     # Generate the design

@@ -1,0 +1,8 @@
+sample_name,compound_1,compound_2,compound_3,compound_4,volume,label
+stock_01,0.2,0.0,0.0,0.0,10.0,stock
+stock_02,0.0,0.4,0.0,0.0,10.0,stock
+stock_03,0.0,0.0,0.5,0.0,10.0,stock
+stock_04,0.0,0.0,0.0,0.4,10.0,stock
+test_01,0.1,0.4,0.6,0.3,0.3,sample
+test_02,0.5,0.3,0.7,1.2,1.2,sample
+test_03,0.6,0.8,0.3,0.1,0.1,sample

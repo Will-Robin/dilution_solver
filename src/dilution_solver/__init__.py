@@ -12,3 +12,7 @@ Code which helps with the preparation of solution samples *en masse*.
    to decide on which stock solutions to prepare, and how much to use for each
    sample, use the code in the `routines` module.
 """
+
+from .design import Design
+
+__all__ = ["Design"]

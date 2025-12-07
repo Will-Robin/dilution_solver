@@ -7,7 +7,6 @@ import scipy
 import pandas as pd
 import numpy as np
 import pyDOE3
-import matplotlib.pyplot as plt
 from typing import Annotated, Literal, TypeVar
 import numpy.typing as npt
 
@@ -223,8 +222,6 @@ def main():
     df = df[cols]
 
     print(df.head())
-    pd.plotting.scatter_matrix(df)
-    plt.show()
 
 
 if __name__ == "__main__":

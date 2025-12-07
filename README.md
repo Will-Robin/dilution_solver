@@ -64,7 +64,7 @@ import pandas as pd
 from dilution_solver import doe
 
 # Specify input information
-exp_code = "VPR001"
+exp_code = "EXP001"
 
 # Generate the design
 n_factors = 3
@@ -87,93 +87,33 @@ print(df.head())
 
 ### 2. I know which sample concentrations I would like to try, but I need to know which concentrations of stock solutions to prepare, and how much should be added to each sample
 
-1. Create a csv file of target concentrations and volumes. Each line should be
-   a sample, the concentration of each component is a column, and one column
-   gives the sample volume, another gives the sample name. It makes things
-   simpler if these quantities are given in unscaled SI units (M and L).
-   Give the file an informative name.
+1. Create a csv file containing some candidate stock solutions and target concentrations and volumes.
+  The file needs columns for sample names, volumes and a label column indicating if the sample is intended as a stock solution (`stock`) or if the sample is intended for measurement (`sample`).
+  In addition to these columns, include one column for each compound to be used in the experiment.
+  It makes things simpler if all quantities are given in unscaled SI units (M and L).
+  Each sample is a row.
+  Add the concentrations required for each sample where appropriate.
+  Stock solutions can contain multiple compounds, but it is easier if they only contain one each.
+  Give the file an informative name.
 
    Example:
 
    ```
-   sample_name,stock_1_concentration/ M,stock_2_concentration/ M,stock_3_concentration/ M,stock_4_concentration/ M,volume/ L
-   test_01,0.1, 0.4, 0.6, 0.3,0.1
-   test_02,0.5, 0.3, 0.7, 1.2,0.1
-   test_03,0.6, 0.8, 0.3, 0.1,0.1
+   sample_name,compound_1,compound_2,compound_3,compound_4,volume,label
+   stock_01,0.2,0.0,0.0,0.0,10.0,stock
+   stock_02,0.0,0.4,0.0,0.0,10.0,stock
+   stock_03,0.0,0.0,0.5,0.0,10.0,stock
+   stock_04,0.0,0.0,0.0,0.4,10.0,stock
+   test_01,0.1,0.4,0.6,0.3,0.3,sample
+   test_02,0.5,0.3,0.7,1.2,1.2,sample
+   test_03,0.6,0.8,0.3,0.1,0.1,sample
    ```
 
-2. Create a separate csv file containing details of the stock solutions you wish
-   to use. One column should contain the sample name. Provide initial guesses
-   for the concentrations you will need in another column, and provide lower and
-     upper bounds for the concentrations in two more columns. Again, to keep
-     things simple, use base SI units. Give this file an informative name, and
-     bear in mind that the aim is to calculate updates the concentrations of
-     these stock solutions and output them in a separate file.
-
-
-    Example:
-
-    ```
-    stock_name,concentration/ M,lower_bound/ M,upper_bound/ M
-    stock_01,0.2,0.001,4.0
-    stock_02,0.4,0.001,4.0
-    stock_03,0.5,0.001,4.0
-    stock_04,0.4,0.001,4.0
-    ```
-
-3. Below is an example script which takes in experimental designs and outputs
+2. Below is an example script which takes in experimental designs and outputs
    files containing a suggested, feasible design. If the design does not work,
    warnings will be printed. See also: `example.py`.
 
-  ```python
-  import pandas as pd
-  from dilution_solver.routines import calculate_stock_volumes
-  from dilution_solver.routines import validate_or_optimize
-
-  # Load concentrations of four stock solutions, one for each component
-  stock_df = pd.read_csv("data/stocks.csv")
-  stock_c = stock_df.concentration.to_numpy()
-  bounds = [(row.lower_bound, row.upper_bound) for _, row in stock_df.iterrows()]
-
-  ## Targets
-  target_df = pd.read_csv("data/targets.csv")
-  targets_c = target_df.drop(columns=["sample_name", "volume"]).to_numpy()
-  targets_v = target_df.volume.to_numpy()
-
-  stock_concs = validate_or_optimize(stock_c, targets_c, targets_v, bounds)
-
-  stock_volumes, solvent_volumes = calculate_stock_volumes(
-      stock_concs, targets_c, targets_v
-  )
-
-  # Create result output
-  design = pd.DataFrame()
-  design["stock_name"] = stock_df.stock_name
-  design["concentration"] = stock_concs
-  design["volume"] = stock_volumes
-
-  # Create result output
-  stock_design = pd.DataFrame()
-  stock_design["stock_name"] = stock_df.stock_name
-  stock_design["concentration"] = stock_concs
-  stock_design["minimum_volume"] = stock_volumes.sum(axis=0)
-
-  target_design = pd.DataFrame(stock_volumes,
-      columns=[f"{stock}_volume" for stock in stock_df.stock_name]
-  )
-  target_design["sample_name"] = target_df.sample_name
-  target_design["solvent"] = solvent_volumes
-
-  # Reorder columns for output
-  cols = target_design.columns.to_list()
-  cols.remove("sample_name")
-  cols  = ["sample_name"] + cols
-  target_design = target_design[cols]
-  stock_design.to_csv("data/stocks_design.csv", index=False)
-  target_design.to_csv("data/sample_volumes.csv", index=False)
-  ```
-
-4. The volumes suggested could be unfeasible (for instance, they may require the
+3. The volumes suggested could be unfeasible (for instance, they may require the
    transfer of nL volumes, but the equipment you have available cannot transfer
    such small volumes). In this case, you can attempt to calculate a new liquid
    transfer scheme and set of stock solutions by creating diluted versions of

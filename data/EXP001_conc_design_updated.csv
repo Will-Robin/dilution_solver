@@ -1,0 +1,9 @@
+compound_1,compound_2,compound_3,compound_4,label,sample_name
+1.7353171602269333,0.0,0.0,0.0,stock,stock_01
+0.0,2.67559459548378,0.0,0.0,stock,stock_02
+0.0,0.0,3.713123373844472,0.0,stock,stock_03
+0.0,0.0,0.0,3.544481345363042,stock,stock_04
+0.0,0.0,0.0,2.0,intermediate,intermediate_0
+0.1,0.4,0.6,0.3,target,test_01
+0.5,0.3,0.7,1.2,target,test_02
+0.6,0.8,0.3,0.1,target,test_03
