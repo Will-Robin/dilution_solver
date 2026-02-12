@@ -6,7 +6,7 @@ concentrations given limits and an algorithm.
 import scipy
 import pandas as pd
 import numpy as np
-import pyDOE3
+from itertools import combinations
 from typing import Annotated, Literal, TypeVar
 import numpy.typing as npt
 
@@ -21,8 +21,7 @@ def box_behnken_design(
     centers: int = 1,
 ) -> Array2[np.float64]:
     """
-    Create a Box-Behnken design scaled to the low/high concentration ranges
-    supplied.
+    Generate a Box-Behnken design matrix using the ranges given.
 
     Parameters
     ----------
@@ -30,8 +29,8 @@ def box_behnken_design(
         Parameter lower limits.
     high: Array1[np.float64],
         Parameter upper limits.
-    centers: int=1,
-        centers to pass to bbdesign (see [pyDOE3 documentation](https://pydoe3.readthedocs.io/en/latest/rsm.html#box-behnken))
+    centers: int
+        Number of center point replicates.
 
     Returns
     -------
@@ -40,8 +39,25 @@ def box_behnken_design(
 
     n_factors = low.shape[0]
 
-    # Generate the design
-    design = pyDOE3.bbdesign(n_factors, centers)
+    if n_factors < 3:
+        raise ValueError("Box-Behnken requires at least 3 factors.")
+
+    design_rows = []
+
+    for i, j in combinations(range(n_factors), 2):
+        two_factor_levels = np.array([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+
+        for row in two_factor_levels:
+            new_row = np.zeros(n_factors)
+            new_row[i] = row[0]
+            new_row[j] = row[1]
+            design_rows.append(new_row)
+
+    for _ in range(centers):
+        design_rows.append(np.zeros(n_factors))
+
+    design = np.array(design_rows)
+
     # center design around 0.5
     design = (design - design.min()) / (design - design.min()).max()
 
@@ -74,7 +90,8 @@ def full_factorial_design(
     scaled_design: Array2[np.float64]
     """
 
-    design = pyDOE3.fullfact(levels)
+    grids = np.meshgrid(*[np.arange(level) for level in levels], indexing="ij")
+    design = np.stack([g.flatten() for g in grids], axis=-1)
 
     # Scale the design to the bounds
     scaled_design = design * (high - low) + low
@@ -196,18 +213,57 @@ def sobol_design(
 
 
 def main():
+    example_full_factorial_design()
+    example_box_behnken_design()
+
+
+def example_box_behnken_design():
     """
     Run an example design process.
     """
-    print("Running example full_factorial_design strategy.")
+    print("Running example box behnken design strategy.")
+
     # Specify input information
-    exp_code = "EXP001"
+    exp_code = "BB001"
 
     # Generate the design
     n_factors = 3
     factor_names = [f"factor_{x}" for x in range(n_factors)]
     low = np.full(n_factors, 0.1)
     high = np.full(n_factors, 1.2)
+
+    scaled_design = box_behnken_design(
+        low,
+        high,
+        centers=3,
+    )
+
+    # Create output
+    df = pd.DataFrame(scaled_design, columns=[x for x in factor_names])
+    sample_names = [f"{exp_code}_{i:03}" for i in range(scaled_design.shape[0])]
+    df["sample_name"] = sample_names
+
+    # Reorder columns
+    cols = ["sample_name"] + [x for x in factor_names]
+    df = df[cols]
+
+    print(df.head())
+
+
+def example_full_factorial_design():
+    """
+    Run an example design process.
+    """
+    print("Running example full_factorial_design strategy.")
+    # Specify input information
+    exp_code = "FF001"
+
+    # Generate the design
+    n_factors = 3
+    factor_names = [f"factor_{x}" for x in range(n_factors)]
+    low = np.full(n_factors, 0.1)
+    high = np.full(n_factors, 1.2)
+
     scaled_design = full_factorial_design(
         low, high, levels=[5 for x in range(low.shape[0])]
     )

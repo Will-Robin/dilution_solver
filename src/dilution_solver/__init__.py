@@ -13,6 +13,7 @@ Code which helps with the preparation of solution samples *en masse*.
    sample, use the code in the `routines` module.
 """
 
+from .doe import doe
 from .design import Design
 
-__all__ = ["Design"]
+__all__ = ["Design", "doe"]

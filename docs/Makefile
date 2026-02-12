@@ -1,6 +1,5 @@
 DIL_SOLV=../src/dilution_solver
 ROOT=../src/dilution_solver/*.py
-ROUTINES=../src/dilution_solver/routines
 DOE=../src/dilution_solver/doe
 
 PACKAGE=$(ROOT) $(ROUTINES) $(DOE)
