@@ -85,13 +85,17 @@ def main():
 
     # Figure out how much each of the samples assigned source must be added to
     # the target samples to create the desired concentrations
-    stock_df = conc_df[df.label == "stock"]
-    stock_concentrations = stock_df.to_numpy()
+    stock_df = df[df.label == "stock"]
+    stock_concentrations = stock_df.drop(
+        columns=["sample_name", "label", "volume"]
+    ).to_numpy()
     stock_voumes = stock_df.volume.to_numpy()
     stock_labels = stock_df.sample_name.to_list()
 
-    target_df = conc_df[df.label == "sample"]
-    target_concentrations = target_df.to_numpy()
+    target_df = df[df.label == "sample"]
+    target_concentrations = target_df.drop(
+        columns=["sample_name", "label", "volume"]
+    ).to_numpy()
     target_volumes = target_df.volume.to_numpy()
     target_labels = target_df.sample_name.to_list()
 
@@ -135,8 +139,10 @@ def main():
     source_vol_df = create_volume_output(design)
     source_vol_df.to_csv(f"data/{exp_code}_transfer_volumes.csv", index=False)
 
+    print("Design (concentrations)")
     print(output_design)
     print()
+    print("Transfer volumes")
     print(source_vol_df)
 
 
