@@ -193,7 +193,9 @@ class Design:
         # TODO: Account for solvent transfer volumes which are too low
         transfer_volumes, solvent_volumes = self.calculate_source_transfer_volumes()
 
-        idx_transfer = np.where(transfer_volumes < min_volume)
+        idx_transfer = np.where(
+            (transfer_volumes < min_volume) & (transfer_volumes > 0.0)
+        )
 
         num_intermediates = len([x for x in self.source_labels if "intermediate" in x])
         for sample_idx, stock_idx in zip(idx_transfer[0], idx_transfer[1]):
@@ -238,9 +240,9 @@ class Design:
         self.root_concentrations = new
         self.source_concentrations[: new.shape[0], : new.shape[1]] = new
 
-    def set_root_volumes(self, new):
+    def set_root_volumes(self, new: np.ndarray):
         self.root_volumes = new
-        self.source_volumes[: new.shape[0], : new.shape[1]] = new
+        self.source_volumes[: new.shape[0]] = new
 
     def set_root_labels(self, new):
         self.root_labels = new
@@ -297,7 +299,6 @@ class Design:
 
     def get_target_labels(self):
         return self.target_labels.copy()
-
 
     """Updaters"""
 
